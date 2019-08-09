@@ -22,8 +22,18 @@ func GetStats(config models.StatsConfig) {
 
 	client := external.GetClient(ctx, config.ApiToken)
 
-	repos := external.GetTeamRepos(config.Org, config.Team, ctx, client)
+	platformRepo, _, err := client.Repositories.Get(context.Background(), "improbable", "platform")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("got " + *platformRepo.Name)
 
+	if err != nil {
+		panic(err)
+	}
+
+	//repos := external.GetTeamRepos(config.Org, config.Team, ctx, client)
+	repos := []*github.Repository{platformRepo}
 	prs := getPullRequests(repos, config, ctx, client)
 
 	filteredPrs := filterPullRequests(prs, config)
